@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BackendApplication {
 
     public static void main(String[] args) {
-        // causando problemas
-        SpringApplication.run(BackendApplication.class, args); 
+        // evitando problemas
+        SpringApplication.run(BackendApplication.class, args);
     }
 
 }
