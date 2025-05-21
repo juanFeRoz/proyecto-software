@@ -14,6 +14,7 @@ Desde el root del proyecto:
 
 - Java 24
 - mariaDB / mySQL
+
   Desde el root del proyecto:
 
 `cd backend && ./mvnw spring-boot:run`
