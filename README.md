@@ -1,4 +1,4 @@
-# proyecto-software
+# ProGit
 
 Entrega del proyecto final de ingenieria de software
 
