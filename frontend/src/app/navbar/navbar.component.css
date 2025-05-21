@@ -26,8 +26,32 @@ header nav ul {
   align-items: center;
 }
 
-header nav a {
+header a {
   color: white;
   text-decoration: none;
   font-weight: 500;
+}
+
+.nav-buttons {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-buttons .btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #4a154b;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  font-weight: 600;
+}
+
+.nav-buttons .btn:hover {
+  background-color: #7c2c81;
 }

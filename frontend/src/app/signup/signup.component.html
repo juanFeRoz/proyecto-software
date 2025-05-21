@@ -1,1 +1,18 @@
-<p>signup works!</p>
+<div class="login-container">
+  <h2>Crear Cuenta</h2>
+  <form (ngSubmit)="onSignup()" #loginForm="ngForm">
+    <label>Nombre:</label>
+    <input type="text" name="name" [(ngModel)]="name" required />
+
+    <label>Username:</label>
+    <input type="text" name="username" [(ngModel)]="username" />
+
+    <label>Email:</label>
+    <input type="email" name="email" [(ngModel)]="email" required />
+
+    <label>Contraseña:</label>
+    <input type="password" name="password" [(ngModel)]="password" required />
+
+    <button type="submit" [disabled]="!loginForm.valid">Entrar</button>
+  </form>
+</div>
