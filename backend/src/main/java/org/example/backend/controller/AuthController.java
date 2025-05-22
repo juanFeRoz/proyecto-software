@@ -1,8 +1,14 @@
-package org.example.backend.user;
+package org.example.backend.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.example.backend.model.Role;
+import org.example.backend.model.User;
+import org.example.backend.dto.LoginDto;
+import org.example.backend.repository.RoleRepository;
+import org.example.backend.dto.SignUpDto;
+import org.example.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

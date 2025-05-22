@@ -1,5 +1,7 @@
-package org.example.backend.user;
+package org.example.backend.service;
 
+import org.example.backend.model.User;
+import org.example.backend.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
