@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import lombok.AllArgsConstructor;
 import org.example.backend.model.User;
 import org.example.backend.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,13 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 public class UserDetailService implements UserDetailsService {
     private final UserRepository userRepository;
-
-    public UserDetailService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
