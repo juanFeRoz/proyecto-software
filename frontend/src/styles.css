@@ -10,19 +10,20 @@
 body {
   font-family: "Inter", sans-serif;
   line-height: 1.6;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: #121212; /* fondo oscuro */
+  color: #e0e0e0; /* texto claro */
 }
 
 .hero {
   padding: 4rem 0;
   text-align: center;
-  background-color: #fff;
+  background-color: #1e1e1e; /* sección ligeramente más clara que el fondo */
 }
 
 .hero h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  color: #ffffff; /* encabezado más brillante */
 }
 
 .hero p {
@@ -31,4 +32,5 @@ body {
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+  color: #cccccc; /* texto descriptivo más suave */
 }

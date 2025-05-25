@@ -6,9 +6,12 @@
         <li><a routerLink="/home" class="btn">Inicio</a></li>
         <li><a routerLink="/about-us" class="btn">Sobre Nosotros</a></li>
         <li *ngIf="logeado"><a routerLink="/login" class="btn">Login</a></li>
-        <li><a routerLink="/signup" class="btn">Sign Up</a></li>
-        <li><a routerLink="/home" class="btn">Log Out</a></li>
+        <li *ngIf="logeado"><a routerLink="/signup" class="btn">Sign Up</a></li>
+        <li *ngIf="!logeado">
+          <a routerLink="/to-do-list" class="btn">To Do List</a>
+        </li>
         <li><a routerLink="/chat" class="btn">Chat</a></li>
+        <li><a routerLink="/home" class="btn">Log Out</a></li>
       </ul>
     </nav>
   </div>
