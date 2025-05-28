@@ -1,0 +1,48 @@
+/* Ocupa todo el alto de la pantalla y centra todo vertical y horizontalmente */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #111;
+  font-family: Arial, sans-serif;
+}
+
+.container-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Caja que contiene el formulario y todo el contenido */
+.login-box {
+  background-color: #1e1e1e;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  width: 300px;
+  color: white;
+  text-align: center;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"],
+.login-box button {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.login-box button {
+  background-color: #8e24aa;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-box button:hover {
+  background-color: #6a1b9a;
+}

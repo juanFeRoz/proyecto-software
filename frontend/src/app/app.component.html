@@ -6,8 +6,13 @@
     <title>ProGit - Comunicación para Equipos</title>
   </head>
   <body>
-    <app-navbar></app-navbar>
+    <!-- Mostrar navbar solo si showLayout es true -->
+    <app-navbar *ngIf="showLayout"></app-navbar>
+
+    <!-- Contenido principal enrutado -->
     <router-outlet></router-outlet>
-    <app-footer></app-footer>
+
+    <!-- Mostrar footer solo si showLayout es true -->
+    <app-footer *ngIf="showLayout"></app-footer>
   </body>
 </html>

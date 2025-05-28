@@ -10,7 +10,8 @@ import {NgIf} from '@angular/common';
     FormsModule,
     NgIf
   ],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   username = '';
@@ -23,7 +24,7 @@ export class LoginComponent {
     this.auth.login(this.username, this.password).subscribe({
       next: () => {
         this.message = '';
-        this.router.navigate(['/chat']);
+        this.router.navigate(['/to-do-list']);
       },
       error: () => {
         this.message = 'Usuario o contraseña incorrectos';

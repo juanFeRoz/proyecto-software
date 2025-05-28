@@ -1,12 +1,16 @@
-<h2>Registrarse</h2>
-<form (ngSubmit)="register()">
-  <div>
-    <input type="text" [(ngModel)]="username" name="username" placeholder="Usuario" required>
+<div class="container-register">
+  <div class="register-box">
+    <h2>Registrarse</h2>
+    <form (ngSubmit)="register()">
+      <div>
+        <input type="text" [(ngModel)]="username" name="username" placeholder="Usuario" required>
+      </div>
+      <div>
+        <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required>
+      </div>
+      <button type="submit">Registrar</button>
+    </form>
+    <p *ngIf="message" [style.color]="isError ? 'red' : 'green'">{{ message }}</p>
   </div>
-  <div>
-    <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required>
-  </div>
-  <button type="submit">Registrar</button>
-</form>
+</div>
 
-<p *ngIf="message" [style.color]="isError ? 'red' : 'green'">{{ message }}</p>

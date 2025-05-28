@@ -3,10 +3,17 @@
     <h1 class="logo"><a routerLink="/home">ProGit</a></h1>
     <nav>
       <ul class="nav-buttons">
-        <li><a routerLink="/home" class="btn">Inicio</a></li>
-        <li><a routerLink="/about-us" class="btn">Sobre Nosotros</a></li>
-        <li><a routerLink="/to-do-list" class="btn">To Do List</a></li>
-        <li><a routerLink="/chat" class="btn">Chat</a></li>
+        <li><a routerLink="/home">Inicio</a></li>
+        <li><a routerLink="/about-us">Sobre Nosotros</a></li>
+
+        <!-- Mostrar solo si NO ha iniciado sesión -->
+        <li *ngIf="!logeado"><a routerLink="/login">Iniciar Sesión</a></li>
+        <li *ngIf="!logeado"><a routerLink="/register">Registrarse</a></li>
+
+        <!-- Mostrar solo si SÍ ha iniciado sesión -->
+        <li *ngIf="logeado"><a routerLink="/to-do-list">To-Do List</a></li>
+        <li *ngIf="logeado"><a routerLink="/chat">Chat</a></li>
+        <li *ngIf="logeado"><a (click)="logout()">Cerrar Sesión</a></li>
       </ul>
     </nav>
   </div>
