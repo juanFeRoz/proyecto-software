@@ -1,31 +1,35 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-register',
-  templateUrl: './register.component.html',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    FormsModule,
+    NgIf
+  ],
+  templateUrl: './register.component.html'
 })
 export class RegisterComponent {
   username = '';
   password = '';
-  error = '';
-  success = '';
+  message = '';
+  isError = false;
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   register() {
     this.auth.register(this.username, this.password).subscribe({
       next: () => {
-        this.error = '';
-        this.success = 'Registration successful. You can now log in.';
+        this.message = 'Registro exitoso. Ahora puedes iniciar sesión.';
+        this.isError = false;
+        setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: err => {
-        this.success = '';
-        this.error = err.error || 'Registration failed';
+        this.message = err.error || 'Error al registrar';
+        this.isError = true;
       }
     });
   }
