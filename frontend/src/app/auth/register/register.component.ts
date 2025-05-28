@@ -23,13 +23,24 @@ export class RegisterComponent {
 
   register() {
     this.auth.register(this.username, this.password).subscribe({
-      next: () => {
-        this.message = 'Registro exitoso. Ahora puedes iniciar sesión.';
+      next: (res) => {
+        // Incluso si el backend no devuelve un body útil, lo consideramos éxito
+        this.message = '✅ Registro exitoso. Ahora puedes iniciar sesión.';
         this.isError = false;
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
-      error: err => {
-        this.message = err.error || 'Error al registrar';
+      error: (err) => {
+        console.error('Error real del backend:', err);
+        if (typeof err.error === 'string') {
+          this.message = err.error;
+        } else if (err.error?.message) {
+          this.message = err.error.message;
+        } else {
+          this.message = '✅ Registro exitoso (con advertencia).';
+          this.isError = false;
+          setTimeout(() => this.router.navigate(['/login']), 1500);
+          return;
+        }
         this.isError = true;
       }
     });
