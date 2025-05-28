@@ -10,7 +10,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   register(username: string, password: string) {
-    return this.http.post('http://localhost:8080/api/auth/register', { username, password }, { withCredentials: true });
+    return this.http.post('http://localhost:8080/api/auth/register', { username, password }, { withCredentials: true, responseType: "text"}, );
   }
 
   login(username: string, password: string) {

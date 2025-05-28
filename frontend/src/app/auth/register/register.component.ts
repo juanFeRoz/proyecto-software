@@ -36,10 +36,10 @@ export class RegisterComponent {
         } else if (err.error?.message) {
           this.message = err.error.message;
         } else {
-          this.message = '✅ Registro exitoso (con advertencia).';
-          this.isError = false;
-          setTimeout(() => this.router.navigate(['/login']), 1500);
-          return;
+                  this.message = '✅ Registro exitoso (con advertencia).';
+        this.isError = false;
+        setTimeout(() => this.router.navigate(['/login']), 1500);
+        return;
         }
         this.isError = true;
       }
