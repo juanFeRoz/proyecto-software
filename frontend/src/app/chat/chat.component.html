@@ -1,82 +1,43 @@
 <div class="chat-container">
-  <!-- Sidebar de canales -->
-  <aside class="sidebar">
-    <h2>Chats</h2>
+  <!-- Lista de usuarios -->
+  <div class="user-list">
+    <h3>Usuarios Online</h3>
     <ul>
-      <li
-        *ngFor="let canal of canales"
-        [class.active]="canal === canalActual"
-        (click)="seleccionarCanal(canal)">
-        # {{ canal }}
+      <li *ngFor="let user of onlineUsers" (click)="selectUser(user)" [class.selected]="user === selectedUser">
+        {{ user }}
       </li>
     </ul>
 
-    <!-- Añadir canal -->
-    <div class="nuevo-canal">
-      <input [(ngModel)]="nuevoCanal" placeholder="Nuevo canal" />
-      <button (click)="agregarCanal()">Añadir canal</button>
+    <h4>Salas</h4>
+    <ul>
+      <li *ngFor="let room of availableRooms" (click)="selectRoom(room.name)" [class.selected]="room.name === currentRoom">
+        {{ room.name }}
+      </li>
+    </ul>
+
+    <!-- Crear nueva sala -->
+    <div>
+      <input [(ngModel)]="newRoomName" placeholder="Nombre de sala" />
+      <input [(ngModel)]="newRoomDescription" placeholder="Descripción" />
+      <button (click)="createRoom()">Crear Sala</button>
     </div>
-  </aside>
+  </div>
 
-  <!-- Área principal del chat -->
-  <main class="chat-main">
-    <header class="chat-header">
-      <h3># {{ canalActual }}</h3>
-    </header>
+  <!-- Chat -->
+  <div class="chat-box">
+    <h3 *ngIf="selectedUser">Chat con {{ selectedUser }}</h3>
+    <h3 *ngIf="currentRoom">Sala: {{ currentRoom }}</h3>
 
-    <!-- Mensajes -->
-    <section class="chat-messages" #messagesContainer>
-      <div *ngFor="let mensaje of mensajes; let i = index" class="mensaje">
-        <span class="user">{{ mensaje.usuario }}</span>
-        <span class="time">{{ mensaje.hora }}</span>
-
-        <!-- Mensaje no editable -->
-        <div *ngIf="!mensaje.editando" class="text">
-          {{ mensaje.texto }}
-
-          <!-- Acciones si el mensaje es del usuario actual -->
-          <span *ngIf="mensaje.usuario === usuarioActual" class="acciones">
-            <button (click)="editarMensaje(mensaje)" [disabled]="indiceConfirmacionEliminar === i">Editar</button>
-
-            <ng-container *ngIf="indiceConfirmacionEliminar === i; else botonEliminar">
-              <span class="confirmacion-eliminar">
-                ¿Eliminar?
-                <button (click)="confirmarEliminar()">Sí</button>
-                <button (click)="cancelarEliminar()">No</button>
-              </span>
-            </ng-container>
-
-            <ng-template #botonEliminar>
-              <button (click)="pedirConfirmacionEliminar(i)">Eliminar</button>
-            </ng-template>
-          </span>
-        </div>
-
-        <!-- Leyenda de edición -->
-        <div *ngIf="mensaje.horaEdicion && !mensaje.editando" class="editado">
-          editado a las {{ mensaje.horaEdicion }}
-        </div>
-
-        <!-- Edición activa -->
-        <div *ngIf="mensaje.editando" class="edicion">
-          <input type="text" [(ngModel)]="mensaje.textoTemporal" />
-          <div class="acciones">
-            <button (click)="guardarEdicion(mensaje)">Guardar</button>
-            <button (click)="cancelarEdicion(mensaje)">Cancelar</button>
-          </div>
-        </div>
+    <div class="messages">
+      <div *ngFor="let msg of selectedUser ? privateMessages : messages">
+        <strong>{{ msg.sender }}:</strong> {{ msg.content }}
+        <small>{{ msg.timestamp | date:'shortTime' }}</small>
       </div>
-    </section>
+    </div>
 
-    <!-- Input para nuevo mensaje -->
-    <footer class="chat-input">
-      <input
-        type="text"
-        [(ngModel)]="nuevoMensaje"
-        placeholder="Escribe un mensaje..."
-        (keyup.enter)="enviarMensaje()"
-      />
-      <button (click)="enviarMensaje()">Enviar</button>
-    </footer>
-  </main>
+    <div class="input-box">
+      <input [(ngModel)]="messageContent" (keyup.enter)="sendMessage()" placeholder="Escribe un mensaje..." />
+      <button (click)="sendMessage()">Enviar</button>
+    </div>
+  </div>
 </div>

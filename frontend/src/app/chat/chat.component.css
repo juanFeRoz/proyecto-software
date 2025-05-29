@@ -1,4 +1,3 @@
-/* Contenedor principal */
 .chat-container {
   display: flex;
   height: 87vh;
@@ -7,8 +6,8 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Sidebar de canales */
-.sidebar {
+/* Sidebar de usuarios y salas */
+.user-list {
   width: 300px;
   background: #2c2c34;
   padding: 20px;
@@ -17,46 +16,32 @@
   flex-direction: column;
 }
 
-.sidebar h2 {
-  margin-bottom: 20px;
+.user-list h3, .user-list h4 {
   color: #b98cff;
+  margin-bottom: 10px;
 }
 
-.sidebar ul {
+.user-list ul {
   list-style: none;
   padding: 0;
-  margin: 0;
-  flex-grow: 1;
-  overflow-y: auto;
+  margin: 0 0 16px 0;
 }
 
-.sidebar li {
+.user-list li {
   padding: 10px;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s;
 }
 
-.sidebar li:hover,
-.sidebar li.active {
+.user-list li:hover,
+.user-list li.selected {
   background: #7b2cbf;
   color: #fff;
 }
 
-.nuevo-canal {
-  padding-top: 15px;
-  display: flex;
-  gap: 4px;
-  border-top: 1px solid #7b2cbf;
-  width: 100%; /* limita el ancho total del contenedor */
-  /* o puedes usar width: 100%; para que se adapte al padre */
-}
-
-.nuevo-canal input {
-  flex-shrink: 1;    /* Permite que el input se encoja si hace falta */
-  flex-grow: 1;      /* Permite que el input crezca para ocupar espacio disponible */
-  min-width: 80px;   /* ancho mínimo para que no desaparezca */
-  max-width: 500px;  /* evita que sea demasiado grande */
+.user-list input {
+  margin-top: 10px;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #7b2cbf;
@@ -64,11 +49,15 @@
   color: #fff;
   font-size: 1rem;
   outline: none;
-  transition: background 0.3s, border-color 0.3s;
 }
 
-.nuevo-canal button {
-  padding: 6px 12px; /* Más cómodo para pulsar */
+.user-list input::placeholder {
+  color: #888;
+}
+
+.user-list button {
+  margin-top: 8px;
+  padding: 8px 12px;
   background: #7b2cbf;
   border: none;
   border-radius: 6px;
@@ -76,140 +65,73 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s;
-  white-space: nowrap;
-  flex-shrink: 0;   /* evita que el botón se encoja */
 }
 
-.nuevo-canal button:hover {
+.user-list button:hover {
   background: #9d4edd;
 }
 
-/* Contenedor principal del chat */
-.chat-main {
+/* Área del chat */
+.chat-box {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: #1a1a1f;
 }
 
-/* Encabezado del canal */
-.chat-header {
+.chat-box h3 {
   padding: 16px;
+  margin: 0;
   background: #2c2c34;
   border-bottom: 1px solid #7b2cbf;
+  color: #b98cff;
 }
 
-/* Área de mensajes */
-.chat-messages {
+/* Mensajes */
+.messages {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
 }
 
-/* Cada mensaje */
-.mensaje {
+.messages div {
   margin-bottom: 16px;
 }
 
-.user {
-  font-weight: bold;
+.messages strong {
   color: #b98cff;
 }
 
-.time {
+.messages small {
   margin-left: 10px;
   font-size: 0.85rem;
   color: #aaa;
 }
 
-.text {
-  margin-top: 4px;
-}
-
-/* Botones de acciones (Editar y Eliminar) */
-.acciones button {
-  background: transparent;
-  border: 1px solid #7b2cbf;
-  color: #b98cff;
-  padding: 4px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  margin-left: 6px;
-}
-
-.acciones button:hover {
-  background: #7b2cbf;
-  color: #fff;
-}
-
-/* Mensaje editado */
-.editado {
-  font-size: 0.75rem;
-  color: #888;
-  margin-top: 4px;
-}
-
-/* Área de edición del mensaje */
-.edicion {
+.input-box {
   display: flex;
-  align-items: center;
   gap: 10px;
-  margin-top: 6px;
-}
-
-/* Input de edición */
-.edicion input {
-  width: 60%;
-  padding: 8px 12px;
-  border: 1px solid #444;
-  border-radius: 6px;
-  background: #29292c;
-  color: #fff;
-  outline: none;
-}
-
-/* Botones Guardar y Cancelar en modo edición */
-.edicion .acciones button {
-  background: #7b2cbf;
-  border: none;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.edicion .acciones button:hover {
-  background: #9d4edd;
-}
-
-/* Input de nuevo mensaje */
-.chat-input {
   padding: 16px;
-  display: flex;
-  gap: 10px;
   border-top: 1px solid #7b2cbf;
   background: #2c2c34;
 }
 
-.chat-input input {
+.input-box input {
   flex: 1;
-  padding: 10px 12px;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid #7b2cbf;
   background: #29292c;
   color: #fff;
   font-size: 1rem;
   outline: none;
-  transition: border-color 0.3s;
 }
 
-.chat-input input:focus {
+.input-box input:focus {
   border-color: #9d4edd;
 }
 
-.chat-input button {
+.input-box button {
   padding: 10px 16px;
   background: #7b2cbf;
   border: none;
@@ -220,51 +142,6 @@
   transition: background 0.3s;
 }
 
-.chat-input button:hover {
-  background: #9d4edd;
-}
-/* Sección para nuevo canal */
-.canales {
-  padding-top: 20px;
-  display: flex;
-  gap: 8px;
-  border-top: 1px solid #7b2cbf;
-  align-items: center;
-}
-
-.canales input {
-  flex: 1; /* Que el input ocupe todo el espacio disponible */
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #7b2cbf;
-  background: #29292c;
-  color: #fff;
-  font-size: 1rem;
-  outline: none;
-  transition: background 0.3s, border-color 0.3s;
-}
-
-.canales input::placeholder {
-  color: #888;
-}
-
-.canales input:focus {
-  background: #34343a;
-  border-color: #9d4edd;
-}
-
-.canales button {
-  padding: 8px 16px;
-  background: #7b2cbf;
-  border: none;
-  border-radius: 6px;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-  white-space: nowrap;
-}
-
-.canales button:hover {
+.input-box button:hover {
   background: #9d4edd;
 }

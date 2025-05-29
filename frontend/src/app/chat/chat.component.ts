@@ -1,147 +1,185 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { ChatService } from './chat.service';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Client, IMessage, IStompSocket} from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import {HttpClient} from '@angular/common/http';
+import {FormsModule} from '@angular/forms';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 
-interface Mensaje {
-  usuario: string;
-  texto: string;
-  hora: string;
-  editando?: boolean;
-  textoTemporal?: string;
-  horaEdicion?: string;
+interface ChatRoom {
+  id?: number;
+  name: string;
+  description?: string;
+}
+
+interface ChatMessage {
+  sender: string;
+  recipient?: string;
+  content: string;
+  timestamp: string;
 }
 
 @Component({
-  standalone: true,
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css'],
-  imports: [CommonModule, FormsModule],
+  imports: [
+    FormsModule,
+    NgForOf,
+    DatePipe,
+    NgIf
+  ],
+  styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  canales: string[] = ['general', 'random', 'proyectos', 'soporte'];
-  canalActual: string = this.canales[0];
-  mensajesPorCanal: { [canal: string]: Mensaje[] } = {};
-  nuevoMensaje: string = '';
-  usuarioActual: string = 'Tú';
-  nuevoCanal: string = '';
-  indiceConfirmacionEliminar: number | null = null;
+  private stompClient: Client = new Client();
 
-  private canalSuscrito: string | null = null;
-  private roomSub: Subscription | null = null;
+  public myUsername: string = '';
+  public onlineUsers: string[] = [];
 
-  constructor(private chatService: ChatService) {
-    this.canales.forEach(canal => {
-      this.mensajesPorCanal[canal] = [
-        { usuario: 'System', texto: `Bienvenido al canal #${canal}`, hora: this.getHoraActual() }
-      ];
-    });
-  }
+  public messages: any[] = [];
+  public privateMessages: ChatMessage[] = [];
+
+  public messageContent = '';
+
+  public availableRooms: ChatRoom[] = [];
+  public currentRoom: string = '';
+  public selectedUser: string | null = null;
+
+  public newRoomName = '';
+  public newRoomDescription = '';
+
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.chatService.connect();
-
-    // suscribirse al canal inicial
-    this.suscribirseACanal(this.canalActual);
+    this.loadRooms();
+    this.loadUsername();
   }
 
-  ngOnDestroy(): void {
-    this.roomSub?.unsubscribe();
-    this.chatService.disconnect();
-  }
-
-  get mensajes(): Mensaje[] {
-    return this.mensajesPorCanal[this.canalActual] || [];
-  }
-
-  seleccionarCanal(canal: string): void {
-    this.canalActual = canal;
-
-    if (!this.mensajesPorCanal[canal]) {
-      this.mensajesPorCanal[canal] = [
-        { usuario: 'System', texto: `Bienvenido al canal #${canal}`, hora: this.getHoraActual() }
-      ];
-    }
-
-    this.suscribirseACanal(canal);
-  }
-
-  enviarMensaje(): void {
-    const texto = this.nuevoMensaje.trim();
-    if (!texto) return;
-
-    this.chatService.sendRoomMessage(this.canalActual, texto);
-    this.nuevoMensaje = '';
-  }
-
-  editarMensaje(mensaje: Mensaje): void {
-    mensaje.editando = true;
-    mensaje.textoTemporal = mensaje.texto;
-  }
-
-  guardarEdicion(mensaje: Mensaje): void {
-    if (mensaje.textoTemporal?.trim()) {
-      mensaje.texto = mensaje.textoTemporal.trim();
-      mensaje.horaEdicion = this.getHoraActual();
-    }
-    mensaje.editando = false;
-    mensaje.textoTemporal = '';
-  }
-
-  cancelarEdicion(mensaje: Mensaje): void {
-    mensaje.editando = false;
-    mensaje.textoTemporal = '';
-  }
-
-  pedirConfirmacionEliminar(index: number): void {
-    this.indiceConfirmacionEliminar = index;
-  }
-
-  confirmarEliminar(): void {
-    if (this.indiceConfirmacionEliminar !== null) {
-      this.mensajesPorCanal[this.canalActual].splice(this.indiceConfirmacionEliminar, 1);
-      this.indiceConfirmacionEliminar = null;
-    }
-  }
-
-  cancelarEliminar(): void {
-    this.indiceConfirmacionEliminar = null;
-  }
-
-  agregarCanal(): void {
-    const nuevo = this.nuevoCanal.trim();
-    if (nuevo && !this.canales.includes(nuevo)) {
-      this.canales.push(nuevo);
-      this.mensajesPorCanal[nuevo] = [
-        { usuario: 'System', texto: `Bienvenido al canal #${nuevo}`, hora: this.getHoraActual() }
-      ];
-      this.seleccionarCanal(nuevo);
-      this.nuevoCanal = '';
-    }
-  }
-
-  private suscribirseACanal(canal: string): void {
-    if (this.canalSuscrito === canal) return;
-
-    this.roomSub?.unsubscribe();
-    this.chatService.subscribeToRoom(canal);
-    this.canalSuscrito = canal;
-
-    this.roomSub = this.chatService.roomMessages$.subscribe(msg => {
-      if (msg && canal === this.canalActual) {
-        this.mensajesPorCanal[canal].push({
-          usuario: msg.sender,
-          texto: msg.content,
-          hora: msg.timestamp
-        });
+  loadUsername() {
+    this.http.get('/api/auth/username', {responseType: 'text'}).subscribe({
+      next: (username) => {
+        this.myUsername = username;
+        this.connect();
+      },
+      error: () => {
+        this.myUsername = 'anonymous';
+        this.connect();
       }
     });
   }
 
-  private getHoraActual(): string {
-    const ahora = new Date();
-    return ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  loadRooms() {
+    this.http.get<ChatRoom[]>('/api/rooms').subscribe({
+      next: rooms => {
+        this.availableRooms = rooms;
+        if (rooms.length > 0) {
+          this.selectRoom(rooms[0].name);
+        }
+      },
+      error: err => console.error('Error cargando salas', err)
+    });
+  }
+
+  connect() {
+    this.stompClient.webSocketFactory = () =>
+      new SockJS('/ws-chat') as unknown as IStompSocket;
+
+    this.stompClient.onConnect = () => {
+      if (this.currentRoom) {
+        this.subscribeToRoom(this.currentRoom);
+      }
+
+      this.stompClient.subscribe('/topic/onlineUsers', (message: IMessage) => {
+        this.onlineUsers = JSON.parse(message.body).filter((u: string) => u !== this.myUsername);
+      });
+
+      this.stompClient.subscribe('/user/queue/messages', (message: IMessage) => {
+        const msg = JSON.parse(message.body) as ChatMessage;
+        this.privateMessages.push(msg);
+      });
+    };
+
+    this.stompClient.activate();
+  }
+
+  subscribeToRoom(room: string) {
+    this.stompClient.subscribe(`/topic/room.${room}`, (message: IMessage) => {
+      if (message.body) {
+        this.messages.push(JSON.parse(message.body));
+      }
+    });
+  }
+
+  selectRoom(roomName: string) {
+    this.disconnect();
+    this.selectedUser = null;
+    this.currentRoom = roomName;
+    this.messages = [];
+    this.connect();
+  }
+
+  selectUser(username: string) {
+    this.disconnect();
+    this.currentRoom = '';
+    this.selectedUser = username;
+    this.privateMessages = [];
+    this.connect();
+  }
+
+  disconnect() {
+    if (this.stompClient.active) {
+      this.stompClient.deactivate();
+    }
+  }
+
+  sendMessage() {
+    if (this.messageContent.trim() === '') return;
+
+    if (this.selectedUser) {
+      const msg: ChatMessage = {
+        sender: this.myUsername,
+        recipient: this.selectedUser,
+        content: this.messageContent,
+        timestamp: new Date().toISOString()
+      };
+      this.stompClient.publish({
+        destination: `/app/chat.private.${this.selectedUser}`,
+        body: JSON.stringify(msg)
+      });
+      this.privateMessages.push(msg);
+    } else if (this.currentRoom) {
+      this.stompClient.publish({
+        destination: `/app/chat.room.${this.currentRoom}`,
+        body: JSON.stringify({ content: this.messageContent })
+      });
+    }
+
+    this.messageContent = '';
+  }
+
+  createRoom() {
+    if (this.newRoomName.trim() === '') {
+      alert('El nombre de la sala es obligatorio');
+      return;
+    }
+    const payload = {
+      name: this.newRoomName,
+      description: this.newRoomDescription
+    };
+    this.http.post<ChatRoom>('/api/rooms', payload).subscribe({
+      next: room => {
+        this.availableRooms.push(room);
+        this.selectRoom(room.name);
+        this.newRoomName = '';
+        this.newRoomDescription = '';
+      },
+      error: err => {
+        console.error('Error creando sala', err);
+        alert('Error creando sala: ' + err.error || err.message);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.disconnect();
   }
 }

@@ -10,7 +10,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   register(username: string, password: string) {
-    return this.http.post('http://localhost:8080/api/auth/register', { username, password }, { withCredentials: true, responseType: "text"}, );
+    return this.http.post('/api/auth/register', { username, password }, { withCredentials: true, responseType: "text"}, );
   }
 
   login(username: string, password: string) {
@@ -18,7 +18,7 @@ export class AuthService {
     body.set('username', username);
     body.set('password', password);
 
-    return this.http.post('http://localhost:8080/api/auth/login', body.toString(), {
+    return this.http.post('/api/auth/login', body.toString(), {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       withCredentials: true
     }).pipe(
@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   logout() {
-    return this.http.post('http://localhost:8080/api/auth/logout', {}, { withCredentials: true }).pipe(
+    return this.http.post('/api/auth/logout', {}, { withCredentials: true }).pipe(
       tap(() => this.isAuthenticated.next(false)) // Marca NO autenticado
     );
   }
