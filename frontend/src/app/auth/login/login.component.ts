@@ -24,7 +24,7 @@ export class LoginComponent {
     this.auth.login(this.username, this.password).subscribe({
       next: () => {
         this.message = '';
-        this.router.navigate(['/to-do-list']);
+        this.router.navigate(['/chat']);
       },
       error: () => {
         this.message = 'Usuario o contraseña incorrectos';

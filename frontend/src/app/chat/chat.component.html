@@ -1,0 +1,76 @@
+<div class="chat-container">
+  <aside class="sidebar">
+    <h2>Chats</h2>
+    <ul>
+      <li *ngFor="let canal of canales" [class.active]="canal === canalActual" (click)="seleccionarCanal(canal)">
+        # {{ canal }}
+      </li>
+    </ul>
+
+    <!-- Bloque para añadir nuevo canal -->
+    <div class="nuevo-canal">
+      <input [(ngModel)]="nuevoCanal" placeholder="Nuevo canal" />
+      <button (click)="agregarCanal()">Añadir canal</button>
+    </div>
+  </aside>
+
+  <main class="chat-main">
+    <header class="chat-header">
+      <h3># {{ canalActual }}</h3>
+    </header>
+
+    <section class="chat-messages" #messagesContainer>
+      <div *ngFor="let mensaje of mensajes; let i = index" class="mensaje">
+        <span class="user">{{ mensaje.usuario }}</span>
+        <span class="time">{{ mensaje.hora }}</span>
+
+        <!-- Vista del mensaje no editable -->
+        <div *ngIf="!mensaje.editando" class="text">
+          {{ mensaje.texto }}
+
+          <span *ngIf="mensaje.usuario === usuarioActual" class="acciones">
+            <button (click)="editarMensaje(mensaje)" [disabled]="indiceConfirmacionEliminar === i">Editar</button>
+
+            <!-- Si este mensaje está pendiente de confirmación de eliminación -->
+            <ng-container *ngIf="indiceConfirmacionEliminar === i; else botonEliminar">
+              <span class="confirmacion-eliminar">
+                ¿Eliminar?
+                <button (click)="confirmarEliminar()">Sí</button>
+                <button (click)="cancelarEliminar()">No</button>
+              </span>
+            </ng-container>
+
+            <!-- Botón eliminar normal -->
+            <ng-template #botonEliminar>
+              <button (click)="pedirConfirmacionEliminar(i)">Eliminar</button>
+            </ng-template>
+          </span>
+        </div>
+
+        <!-- Leyenda de edición -->
+        <div *ngIf="mensaje.horaEdicion && !mensaje.editando" class="editado">
+          editado a las {{ mensaje.horaEdicion }}
+        </div>
+
+        <!-- Área de edición -->
+        <div *ngIf="mensaje.editando" class="edicion">
+          <input type="text" [(ngModel)]="mensaje.textoTemporal" />
+          <div class="acciones">
+            <button (click)="guardarEdicion(mensaje)">Guardar</button>
+            <button (click)="cancelarEdicion(mensaje)">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="chat-input">
+      <input
+        type="text"
+        [(ngModel)]="nuevoMensaje"
+        placeholder="Escribe un mensaje..."
+        (keyup.enter)="enviarMensaje()"
+      />
+      <button (click)="enviarMensaje()">Enviar</button>
+    </footer>
+  </main>
+</div>
