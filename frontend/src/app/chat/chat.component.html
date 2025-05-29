@@ -1,37 +1,43 @@
 <div class="chat-container">
+  <!-- Sidebar de canales -->
   <aside class="sidebar">
     <h2>Chats</h2>
     <ul>
-      <li *ngFor="let canal of canales" [class.active]="canal === canalActual" (click)="seleccionarCanal(canal)">
+      <li
+        *ngFor="let canal of canales"
+        [class.active]="canal === canalActual"
+        (click)="seleccionarCanal(canal)">
         # {{ canal }}
       </li>
     </ul>
 
-    <!-- Bloque para añadir nuevo canal -->
+    <!-- Añadir canal -->
     <div class="nuevo-canal">
       <input [(ngModel)]="nuevoCanal" placeholder="Nuevo canal" />
       <button (click)="agregarCanal()">Añadir canal</button>
     </div>
   </aside>
 
+  <!-- Área principal del chat -->
   <main class="chat-main">
     <header class="chat-header">
       <h3># {{ canalActual }}</h3>
     </header>
 
+    <!-- Mensajes -->
     <section class="chat-messages" #messagesContainer>
       <div *ngFor="let mensaje of mensajes; let i = index" class="mensaje">
         <span class="user">{{ mensaje.usuario }}</span>
         <span class="time">{{ mensaje.hora }}</span>
 
-        <!-- Vista del mensaje no editable -->
+        <!-- Mensaje no editable -->
         <div *ngIf="!mensaje.editando" class="text">
           {{ mensaje.texto }}
 
+          <!-- Acciones si el mensaje es del usuario actual -->
           <span *ngIf="mensaje.usuario === usuarioActual" class="acciones">
             <button (click)="editarMensaje(mensaje)" [disabled]="indiceConfirmacionEliminar === i">Editar</button>
 
-            <!-- Si este mensaje está pendiente de confirmación de eliminación -->
             <ng-container *ngIf="indiceConfirmacionEliminar === i; else botonEliminar">
               <span class="confirmacion-eliminar">
                 ¿Eliminar?
@@ -40,7 +46,6 @@
               </span>
             </ng-container>
 
-            <!-- Botón eliminar normal -->
             <ng-template #botonEliminar>
               <button (click)="pedirConfirmacionEliminar(i)">Eliminar</button>
             </ng-template>
@@ -52,7 +57,7 @@
           editado a las {{ mensaje.horaEdicion }}
         </div>
 
-        <!-- Área de edición -->
+        <!-- Edición activa -->
         <div *ngIf="mensaje.editando" class="edicion">
           <input type="text" [(ngModel)]="mensaje.textoTemporal" />
           <div class="acciones">
@@ -63,6 +68,7 @@
       </div>
     </section>
 
+    <!-- Input para nuevo mensaje -->
     <footer class="chat-input">
       <input
         type="text"
