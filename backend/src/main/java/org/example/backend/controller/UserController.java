@@ -1,4 +1,4 @@
-package org.example.backend.config;
+package org.example.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.backend.service.WebSocketUserRegistry;
